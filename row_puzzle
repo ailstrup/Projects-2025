@@ -1,0 +1,53 @@
+# Author: Alec Ilstrup
+# GitHub username: ailstrup
+# Date: 11/2/2025
+# Description: recursively determines if a row puzzle is solvable by exploring all possible paths
+def row_puzzle(row, current_index=0, visited=None):
+    """
+    Returns True if the row puzzle is solvable, False otherwise.
+
+    A token starts at index 0 and must reach the last index. On each turn,
+    the token moves left or right by the value in its current square.
+
+    Parameters:
+    row: list of nonnegative integers
+    current_index: current position (default 0)
+    visited: set of visited indices for cycle detection (default None)
+    """
+
+    # Initialize visited as an empty set if this is the first call
+    if visited is None:
+        visited = set()
+
+    # Base case 1: Successful. We've reached the rightmost square
+    if current_index == len(row) - 1:
+        return True
+
+    # Base case 2: Cycle detection - we've been to this index before on this path
+    # Return False to avoid infinite loops
+    if current_index in visited:
+        return False
+
+    # Base case 3: Boundary check - the move went off either end of the row
+    # Return False because this is an invalid position
+    if current_index < 0 or current_index >= len(row):
+        return False
+
+    # Get the value at the current position. this tells us how many squares to move
+    steps = row[current_index]
+
+    # Create a new set with the current index added to visited indices
+    # We use | to create a new set without modifying the original
+    # Allows different branches of recursion to maintain separate visited sets
+    new_visited = visited | {current_index}
+
+    # Calculate the two possible moves from this position
+    left_index = current_index - steps
+    right_index = current_index + steps
+
+    # Recursive case: Try both directions and return True if either path succeeds
+    return row_puzzle(row, left_index, new_visited) or row_puzzle(row, right_index, new_visited)
+
+
+
+
